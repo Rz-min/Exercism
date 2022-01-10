@@ -2,37 +2,45 @@
 // In order to pass the tests you can add-to or change any of this code.
 
 #[derive(Debug)]
-pub struct Duration;
+pub struct Duration {
+    pub converted_time: f64
+}
 
 impl From<u64> for Duration {
     fn from(s: u64) -> Self {
-        unimplemented!("s, measured in seconds: {}", s)
+        Self {
+            converted_time: (s as f64)
+        }
     }
 }
 
 pub trait Planet {
+    const EARTH_YEAR_SECONDS: f64 = 31557600.0;
+    const EATH_YEAR_RATIO: f64;
     fn years_during(d: &Duration) -> f64 {
-        unimplemented!(
-            "convert a duration ({:?}) to the number of years on this planet for that duration",
-            d,
-        );
+        d.converted_time / Self::EARTH_YEAR_SECONDS / Self::EATH_YEAR_RATIO
     }
 }
 
-pub struct Mercury;
-pub struct Venus;
-pub struct Earth;
-pub struct Mars;
-pub struct Jupiter;
-pub struct Saturn;
-pub struct Uranus;
-pub struct Neptune;
+macro_rules! boilerplate {
+    ($($t:ident => $e:expr), *) => {
+        $(
+            pub struct $t {}
 
-impl Planet for Mercury {}
-impl Planet for Venus {}
-impl Planet for Earth {}
-impl Planet for Mars {}
-impl Planet for Jupiter {}
-impl Planet for Saturn {}
-impl Planet for Uranus {}
-impl Planet for Neptune {}
+            impl Planet for $t {
+                const EATH_YEAR_RATIO: f64 = $e;
+            }
+        )*
+    }
+}
+
+boilerplate!(
+    Mercury => 0.2408467,
+    Venus => 0.61519726,
+    Earth => 1.0,
+    Mars => 1.8808158,
+    Jupiter => 11.862615,
+    Saturn => 29.447498,
+    Uranus => 84.016846,
+    Neptune => 164.79132
+);
